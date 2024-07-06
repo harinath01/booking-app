@@ -9,7 +9,18 @@ const conferenceName = "Go Conference"
 const conferenceTicketsCount uint = 50
 
 var remainingTicketsCount = conferenceTicketsCount
-var bookings []string
+var bookings []Booking
+
+type Booking struct {
+	bookedBy User
+	numberOfTickets uint
+}
+
+type User struct {
+	firstName string
+	lastName string
+	email string
+}
 
 func main() {
 	greetUser()
@@ -69,7 +80,18 @@ func validateUserInputs(firstName string, lastName string, email string, numOfTi
 
 func bookTicket(numOfTickets uint, firstName string, lastName string, email string) {
 	remainingTicketsCount = remainingTicketsCount - numOfTickets
-	bookings = append(bookings, firstName+" "+lastName)
+	user := User {
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
+	}
+
+	booking := Booking{
+		bookedBy: user,
+		numberOfTickets: numOfTickets,
+	}
+
+	bookings = append(bookings, booking)
 	fmt.Printf("Thank you, %v %v, for booking %v for %v, you will receive a confirmation at %v\n", firstName, lastName, numOfTickets, conferenceName, email)
 }
 
@@ -77,8 +99,7 @@ func bookTicket(numOfTickets uint, firstName string, lastName string, email stri
 func printBookedUsersFirstName() {
 	var firstNames []string
 	for _, booking := range bookings {
-		names := strings.Fields(booking)
-		firstNames = append(firstNames, names[0])
+		firstNames = append(firstNames, booking.bookedBy.firstName)
 	}
 
 	fmt.Printf("These guys also booked tickets for this conference: %v\n", firstNames)
