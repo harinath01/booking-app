@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	data "booking-app/data_classes"
+	"booking-app/utils"
+	"sync"
 )
 
 const conferenceName = "Go Conference"
@@ -11,9 +13,14 @@ const conferenceTicketsCount uint = 50
 
 var remainingTicketsCount = conferenceTicketsCount
 var bookings []data.Booking
+var emailChannel = make(chan data.EmailRequest)
+var wg sync.WaitGroup
 
 func main() {
 	greetUser()
+
+	wg.Add(1)
+	go utils.SendEmail(emailChannel, &wg)
 
 	for {
 		firstName, lastName, email, numOfTickets := getUserInputs()
@@ -29,6 +36,9 @@ func main() {
 
 		if remainingTicketsCount == 0 {
 			fmt.Println("We're booked out, please come back next year.")
+			close(emailChannel)
+			wg.Wait()
+			break
 		}
 	}
 }
@@ -83,6 +93,11 @@ func bookTicket(numOfTickets uint, firstName string, lastName string, email stri
 
 	bookings = append(bookings, booking)
 	fmt.Printf("Thank you, %v, for booking %v for %v, you will receive a confirmation at %v\n", user.GetFullName(), numOfTickets, conferenceName, email)
+	emailChannel <- data.EmailRequest {
+		To: user.Email,
+		Subject: fmt.Sprintf("%v Ticket confirmation", conferenceName),
+		Body: fmt.Sprintf("Thank you for booking %v tickets for %v, but please don't come"),
+	}
 }
 
 
