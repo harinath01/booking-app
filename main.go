@@ -3,28 +3,14 @@ package main
 import (
 	"fmt"
 	"strings"
+	data "booking-app/data_classes"
 )
 
 const conferenceName = "Go Conference"
 const conferenceTicketsCount uint = 50
 
 var remainingTicketsCount = conferenceTicketsCount
-var bookings []Booking
-
-type Booking struct {
-	bookedBy User
-	numberOfTickets uint
-}
-
-type User struct {
-	firstName string
-	lastName string
-	email string
-}
-
-func (user User) getFullName() string {
-	return user.firstName + " " + user.lastName
-}
+var bookings []data.Booking
 
 func main() {
 	greetUser()
@@ -84,26 +70,26 @@ func validateUserInputs(firstName string, lastName string, email string, numOfTi
 
 func bookTicket(numOfTickets uint, firstName string, lastName string, email string) {
 	remainingTicketsCount = remainingTicketsCount - numOfTickets
-	user := User {
-		firstName: firstName,
-		lastName: lastName,
-		email: email,
+	user := data.User {
+		FirstName: firstName,
+		LastName: lastName,
+		Email: email,
 	}
 
-	booking := Booking{
-		bookedBy: user,
-		numberOfTickets: numOfTickets,
+	booking := data.Booking{
+		BookedBy: user,
+		NumberOfTickets: numOfTickets,
 	}
 
 	bookings = append(bookings, booking)
-	fmt.Printf("Thank you, %v, for booking %v for %v, you will receive a confirmation at %v\n", user.getFullName(), numOfTickets, conferenceName, email)
+	fmt.Printf("Thank you, %v, for booking %v for %v, you will receive a confirmation at %v\n", user.GetFullName(), numOfTickets, conferenceName, email)
 }
 
 
 func printBookedUsersFirstName() {
 	var firstNames []string
 	for _, booking := range bookings {
-		firstNames = append(firstNames, booking.bookedBy.getFullName())
+		firstNames = append(firstNames, booking.BookedBy.GetFullName())
 	}
 
 	fmt.Printf("These guys also booked tickets for this conference: %v\n", firstNames)
