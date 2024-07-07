@@ -22,6 +22,10 @@ type User struct {
 	email string
 }
 
+func (user User) getFullName() string {
+	return user.firstName + " " + user.lastName
+}
+
 func main() {
 	greetUser()
 
@@ -92,14 +96,14 @@ func bookTicket(numOfTickets uint, firstName string, lastName string, email stri
 	}
 
 	bookings = append(bookings, booking)
-	fmt.Printf("Thank you, %v %v, for booking %v for %v, you will receive a confirmation at %v\n", firstName, lastName, numOfTickets, conferenceName, email)
+	fmt.Printf("Thank you, %v, for booking %v for %v, you will receive a confirmation at %v\n", user.getFullName(), numOfTickets, conferenceName, email)
 }
 
 
 func printBookedUsersFirstName() {
 	var firstNames []string
 	for _, booking := range bookings {
-		firstNames = append(firstNames, booking.bookedBy.firstName)
+		firstNames = append(firstNames, booking.bookedBy.getFullName())
 	}
 
 	fmt.Printf("These guys also booked tickets for this conference: %v\n", firstNames)
